@@ -8,11 +8,9 @@ object Implicits {
 		override def handle(event: Event): Boolean = f(event)
 	}
 	
-	implicit def unitFunctionToEventListener(f: (Event) => Unit) = new EventListener {
-		override def handle(event: Event): Boolean = {
-			f(event)
-			true
-		}
-	}
+	implicit def unitFunctionToEventListener(f: (Event) => Unit) = eventFunctionToEventListener((e: Event) => {
+		f(e)
+		false
+	})
 	
 }

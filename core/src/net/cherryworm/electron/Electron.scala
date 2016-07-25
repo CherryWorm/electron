@@ -9,8 +9,8 @@ import com.kotcrab.vis.ui.VisUI
 
 object Electron {
 	
-	val WIDTH = 1920
-	val HEIGHT = 1080
+	val WIDTH = 800
+	val HEIGHT = 450
 	
 	lazy val batch = new SpriteBatch
 	lazy val logger = {
@@ -34,7 +34,7 @@ class Electron extends Game {
 	
 	override def create() = {
 		VisUI.load()
-		setScreen(MAIN_MENU)
+		setScreen(GAME_SCREEN)
 	}
 	
 	override def render() = {
