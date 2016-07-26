@@ -36,7 +36,7 @@ class Player(world: World, rayHandler: RayHandler) extends Entity(world,
 	playerBodyDef,
 	playerFixtureDef,
 	playerTextureRegion,
-	Option(new PointLight(rayHandler, LIGHT_RAYS, new Color(Color.SCARLET.r, Color.SCARLET.g, Color.SCARLET.b, 0.9f), 3f, 0f, 0f) {
+	Option(new PointLight(rayHandler, LIGHT_RAYS, new Color(Color.SCARLET.r, Color.SCARLET.g, Color.SCARLET.b, 0.7f), 3f, 0f, 0f) {
 		setXray(true)
 	})) {
 	

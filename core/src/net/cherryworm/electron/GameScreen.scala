@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
 
 class GameScreen extends Screen {
 	
-	val world = new World(new Vector2(0, -9.81f), true)
+	val world = new World(new Vector2(0, -5.00f), true)
 	val rayHandler = new RayHandler(world) {
 		setAmbientLight(0.1f, 0.1f, 0.1f, 0.1f)
 		setBlur(true)
