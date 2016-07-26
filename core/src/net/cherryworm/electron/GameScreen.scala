@@ -1,12 +1,12 @@
 package net.cherryworm.electron
 
-import com.badlogic.gdx.Screen
+import box2dLight.RayHandler
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.{Body, World}
+import com.badlogic.gdx.{Gdx, Screen}
+import net.cherryworm.electron.GameScreen._
 import net.cherryworm.electron.game.{Entity, Player, Wall}
-import GameScreen._
-import box2dLight.RayHandler
-import com.badlogic.gdx.graphics.Color
 
 import scala.collection.JavaConversions._
 
@@ -14,19 +14,37 @@ class GameScreen extends Screen {
 	
 	val world = new World(new Vector2(0, -9.81f), true)
 	val rayHandler = new RayHandler(world) {
-		setShadows(false)
-		//setAmbientLight(0x909AD497)
+		setAmbientLight(0.1f, 0.1f, 0.1f, 0.1f)
+		setBlur(true)
 	}
+	
+	val camera = new OrthographicCamera(10f * Gdx.graphics.getWidth / Gdx.graphics.getHeight, 10f)
+	camera.position.y = 5
+	camera.position.x = camera.viewportWidth / 2f
+	
 	var accumulator = 0f
 	
-	override def dispose(): Unit = world.dispose()
+	override def dispose(): Unit = {
+		world.dispose()
+		rayHandler.dispose()
+		Player.playerTextureRegion.getTexture.dispose()
+		Player.playerFixtureDef.shape.dispose()
+		Wall.wallTextureRegion.getTexture.dispose()
+		Wall.wallFixtureDef.shape.dispose()
+	}
 	
 	override def render(delta: Float): Unit = {
+		camera.update()
+		Electron.batch.setProjectionMatrix(camera.combined)
+		
 		updateWorld(delta)
 		
 		Electron.batch.begin()
 		getEntities(world) foreach(_.render(Electron.batch))
 		Electron.batch.end()
+		
+		rayHandler.setCombinedMatrix(camera)
+		rayHandler.updateAndRender()
 	}
 	
 	override def show(): Unit = {}
@@ -35,7 +53,11 @@ class GameScreen extends Screen {
 	override def resume(): Unit = {}
 	override def pause(): Unit = {}
 	
-	override def resize(width: Int, height: Int): Unit = {}
+	override def resize(width: Int, height: Int): Unit = {
+		camera.viewportHeight = 10f
+		camera.viewportWidth = 10f * width / height
+		camera.update()
+	}
 	
 	def updateWorld(delta: Float): Unit = {
 		val frameTime = Math.min(delta, 0.25f)
@@ -49,8 +71,8 @@ class GameScreen extends Screen {
 	
 	
 	val player = new Player(world, rayHandler)
-	for(i <- -5 to 5) {
-		new Wall(world, 5, 0)
+	for (i <- -10 to 10) {
+		new Wall(world, i, 0)
 	}
 	
 }
