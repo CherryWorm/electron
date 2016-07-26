@@ -3,7 +3,7 @@ package net.cherryworm.electron
 import box2dLight.RayHandler
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.{Body, World}
+import com.badlogic.gdx.physics.box2d.{Body, Box2DDebugRenderer, World}
 import com.badlogic.gdx.{Gdx, Screen}
 import net.cherryworm.electron.GameScreen._
 import net.cherryworm.electron.game.{Entity, Player, Wall}
@@ -17,6 +17,8 @@ class GameScreen extends Screen {
 		setAmbientLight(0.1f, 0.1f, 0.1f, 0.1f)
 		setBlur(true)
 	}
+	
+	val debugRenderer = new Box2DDebugRenderer()
 	
 	val camera = new OrthographicCamera(10f * Gdx.graphics.getWidth / Gdx.graphics.getHeight, 10f)
 	camera.position.y = 5
@@ -45,6 +47,7 @@ class GameScreen extends Screen {
 		
 		rayHandler.setCombinedMatrix(camera)
 		rayHandler.updateAndRender()
+		//debugRenderer.render(world, camera.combined)
 	}
 	
 	override def show(): Unit = {}

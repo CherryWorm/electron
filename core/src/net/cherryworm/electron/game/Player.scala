@@ -4,6 +4,7 @@ import box2dLight.{PointLight, RayHandler}
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.{Color, Texture}
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.physics.box2d.{BodyDef, CircleShape, FixtureDef, World}
 
@@ -19,7 +20,8 @@ object Player {
 		friction = 0.4f
 		restitution = 0.9f
 		shape = new CircleShape {
-			setRadius(1f)
+			setRadius(0.5f)
+			setPosition(new Vector2(0.5f, 0.5f))
 		}
 	}
 	
