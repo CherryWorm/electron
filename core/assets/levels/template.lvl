@@ -1,0 +1,10 @@
+n_players
+(n mal:)
+player_n_x player_n_y
+
+ambient_r ambient_g ambient_b ambient_a
+
+width height
+
+(width * height mal, reihenweiße:)
+textureId type(0=wall_entity,1=texture,2=exit) (wenn type==0:) chargeOff chargeOn friction restitution
