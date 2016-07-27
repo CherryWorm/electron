@@ -1,8 +1,11 @@
 package net.cherryworm.electron.game
 
+import java.util.{Locale, Scanner}
+
 import box2dLight.RayHandler
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Keys
+import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
@@ -12,18 +15,27 @@ import net.cherryworm.electron.GameScreen
 import net.cherryworm.electron.GameScreen._
 
 
-class Level(gameScreen: GameScreen) extends Disposable {
+class Level(gameScreen: GameScreen, fileHandle: FileHandle) extends Disposable {
+	
+	private val scanner = new Scanner(fileHandle.read())
+	scanner.useLocale(Locale.US)
+	
+	val width = scanner.nextInt()
+	val height = scanner.nextInt()
 	
 	val world = new World(new Vector2(0, 0), true)
 	val rayHandler = new RayHandler(world) {
-		setAmbientLight(0.25f, 0.25f, 0.25f, 0.25f)
+		setAmbientLight(scanner.nextFloat(), scanner.nextFloat(), scanner.nextFloat(), scanner.nextFloat())
 		setBlur(true)
 	}
 	
-	var debug = true
+	var debug = false
 	var powerOn = false
 	
-	val player = new Player(this, 5, 5, -1)
+	val playerStartX = scanner.nextInt()
+	val playerStartY = scanner.nextInt()
+	
+	val player = new Player(this, playerStartX + 0.5f, playerStartY + 0.5f, scanner.nextFloat())
 	
 	
 	def bodies = {
@@ -37,12 +49,18 @@ class Level(gameScreen: GameScreen) extends Disposable {
 	
 	def load(): Unit = {
 		for (i <- -10 to 20) {
-			new Wall(this, i, 0)
+			new Wall(this, i + 0.5f, 0.5f)
 		}
 		for (i <- -10 to 20) {
-			new Wall(this, i, 9)
+			new Wall(this, i + 0.5f, 9.5f)
 		}
-		new Charge(this, -1, 1, 10, 5)
+		new Charge(this, -1, 2, 10.5f, 5.5f)
+	}
+	
+	def reset(): Unit = {
+		player.body.setTransform(playerStartX + 0.5f, playerStartY + 0.5f, 0)
+		player.body.setAngularVelocity(0)
+		player.body.setLinearVelocity(0, 0)
 	}
 	
 	def render(batch: SpriteBatch, camera: OrthographicCamera): Unit = {
@@ -71,6 +89,7 @@ class Level(gameScreen: GameScreen) extends Disposable {
 	def processInputs(): Unit = {
 		powerOn = Gdx.input.isKeyPressed(Keys.SPACE)
 		if (Gdx.input.isKeyJustPressed(Keys.D)) debug = !debug
+		if (Gdx.input.isKeyJustPressed(Keys.R)) reset()
 	}
 	
 	override def dispose(): Unit = {
@@ -78,4 +97,5 @@ class Level(gameScreen: GameScreen) extends Disposable {
 		rayHandler.dispose()
 	}
 	
+	scanner.close()
 }

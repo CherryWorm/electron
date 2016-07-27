@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d._
 
 object Wall {
 	
-	def wallBodyDef(x: Int, y: Int) = new BodyDef {
+	def wallBodyDef(x: Float, y: Float) = new BodyDef {
 		`type` = BodyType.StaticBody
 		position.set(x, y)
 	}
@@ -16,9 +16,9 @@ object Wall {
 	lazy val wallFixtureDef = new FixtureDef {
 		density = 1f
 		friction = 1f
-		restitution = 0.5f
+		restitution = 0.2f
 		shape = new PolygonShape() {
-			setAsBox(1, 1)
+			setAsBox(0.5f, 0.5f)
 		}
 	}
 	
@@ -28,7 +28,7 @@ object Wall {
 
 import net.cherryworm.electron.game.Wall._
 
-class Wall(level: Level, x: Int, y: Int) extends Entity(
+class Wall(level: Level, x: Float, y: Float) extends Entity(
 	level,
 	wallBodyDef(x, y),
 	wallFixtureDef,

@@ -24,7 +24,7 @@ class GameScreen extends Screen {
 	
 	var accumulator = 0f
 	
-	val level = new Level(this)
+	val level = new Level(this, Gdx.files.internal("levels/1.lvl"))
 	level.load()
 	
 	override def dispose(): Unit = {

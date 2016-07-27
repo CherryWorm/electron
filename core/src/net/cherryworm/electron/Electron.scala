@@ -2,6 +2,7 @@ package net.cherryworm.electron
 
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.physics.box2d.Box2D
 import com.github.czyzby.kiwi.log.LoggerService
 import com.github.czyzby.kiwi.util.gdx.GdxUtilities
 import com.kotcrab.vis.ui.VisUI
@@ -21,7 +22,7 @@ object Electron {
 	lazy val MAIN_MENU = new MainMenu
 	lazy val GAME_SCREEN = new GameScreen
 	
-	var instance: Electron = null
+	var instance: Electron = _
 	
 }
 
@@ -33,6 +34,7 @@ class Electron extends Game {
 	instance = this
 	
 	override def create() = {
+		Box2D.init()
 		VisUI.load()
 		setScreen(GAME_SCREEN)
 	}
