@@ -1,22 +1,20 @@
 package net.cherryworm.electron
 
-import box2dLight.RayHandler
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.{Body, Box2DDebugRenderer, World}
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.{Gdx, Screen}
-import net.cherryworm.electron.GameScreen._
-import net.cherryworm.electron.game.{Entity, Player, Wall}
+import net.cherryworm.electron.game._
 
-import scala.collection.JavaConversions._
+
+object GameScreen {
+	val TIME_STEP = 1 / 300f
+	val VELOCITY_ITERATIONS = 6
+	val POSITION_ITERATIONS = 2
+	val LIGHT_RAYS = 500
+}
+
 
 class GameScreen extends Screen {
-	
-	val world = new World(new Vector2(0, -5.00f), true)
-	val rayHandler = new RayHandler(world) {
-		setAmbientLight(0.1f, 0.1f, 0.1f, 0.1f)
-		setBlur(true)
-	}
 	
 	val debugRenderer = new Box2DDebugRenderer()
 	
@@ -26,28 +24,26 @@ class GameScreen extends Screen {
 	
 	var accumulator = 0f
 	
+	val level = new Level(this)
+	level.load()
+	
 	override def dispose(): Unit = {
-		world.dispose()
-		rayHandler.dispose()
-		Player.playerTextureRegion.getTexture.dispose()
-		Player.playerFixtureDef.shape.dispose()
-		Wall.wallTextureRegion.getTexture.dispose()
-		Wall.wallFixtureDef.shape.dispose()
+		debugRenderer.dispose()
+		level.dispose()
 	}
 	
 	override def render(delta: Float): Unit = {
+		level.processInputs()
+		level.updateWorld(delta)
+		
 		camera.update()
+		
+		
 		Electron.batch.setProjectionMatrix(camera.combined)
 		
-		updateWorld(delta)
+		level.render(Electron.batch, camera)
 		
-		Electron.batch.begin()
-		getEntities(world) foreach(_.render(Electron.batch))
-		Electron.batch.end()
-		
-		rayHandler.setCombinedMatrix(camera)
-		rayHandler.updateAndRender()
-		//debugRenderer.render(world, camera.combined)
+		if (level.debug) debugRenderer.render(level.world, camera.combined)
 	}
 	
 	override def show(): Unit = {}
@@ -62,48 +58,4 @@ class GameScreen extends Screen {
 		camera.update()
 	}
 	
-	def updateWorld(delta: Float): Unit = {
-		val frameTime = Math.min(delta, 0.25f)
-		accumulator += frameTime
-		while (accumulator >= TIME_STEP) {
-			getEntities(world) foreach (_.update(delta))
-			world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS)
-			accumulator -= TIME_STEP
-		}
-	}
-	
-	
-	val player = new Player(world, rayHandler)
-	for (i <- -10 to 10) {
-		new Wall(world, i, 0)
-	}
-	
-}
-
-
-
-
-
-
-
-
-
-
-object GameScreen {
-	val TIME_STEP = 1/300f
-	val VELOCITY_ITERATIONS = 6
-	val POSITION_ITERATIONS = 2
-	val LIGHT_RAYS = 500
-	
-	val PIXELS_PER_UNIT = 16F
-	
-	def worldToPixel(v: Vector2): (Int, Int) = ((v.x * PIXELS_PER_UNIT).round, (v.y * PIXELS_PER_UNIT).round.toInt)
-	
-	def getBodies(world: World) = {
-		val bodies = new com.badlogic.gdx.utils.Array[Body](world.getBodyCount)
-		world.getBodies(bodies)
-		bodies
-	}
-	
-	def getEntities(world: World) = getBodies(world) map (_.getUserData.asInstanceOf[Entity])
 }

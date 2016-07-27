@@ -1,18 +1,18 @@
 package net.cherryworm.electron.game
 
-import box2dLight.{PointLight, RayHandler}
+import box2dLight.PointLight
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.{Color, Texture}
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
-import com.badlogic.gdx.physics.box2d.{BodyDef, CircleShape, FixtureDef, World}
+import com.badlogic.gdx.physics.box2d.{BodyDef, CircleShape, FixtureDef}
 
 object Player {
 	
-	lazy val playerBodyDef = new BodyDef {
+	def playerBodyDef(x: Int, y: Int) = new BodyDef {
 		`type` = BodyType.DynamicBody
-		position.set(5, 5)
+		position.set(x, y)
 	}
 	
 	lazy val playerFixtureDef = new FixtureDef {
@@ -32,13 +32,13 @@ object Player {
 import net.cherryworm.electron.GameScreen.LIGHT_RAYS
 import net.cherryworm.electron.game.Player._
 
-class Player(world: World, rayHandler: RayHandler) extends Entity(world,
-	playerBodyDef,
+class Player(level: Level, x: Int, y: Int, val charge: Float) extends Entity(level,
+	playerBodyDef(x, y),
 	playerFixtureDef,
 	playerTextureRegion,
-	Option(new PointLight(rayHandler, LIGHT_RAYS, new Color(Color.SCARLET.r, Color.SCARLET.g, Color.SCARLET.b, 0.7f), 3f, 0f, 0f) {
+	Option(new PointLight(level.rayHandler, LIGHT_RAYS, new Color(Color.SCARLET.r, Color.SCARLET.g, Color.SCARLET.b, 0.7f), 3f, 0f, 0f) {
 		setXray(true)
 	})) {
 	
-	override def update(delta: Float): Unit = {}
+	override def update(delta: Float, stateOn: Boolean): Unit = {}
 }

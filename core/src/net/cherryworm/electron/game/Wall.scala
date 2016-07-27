@@ -16,7 +16,7 @@ object Wall {
 	lazy val wallFixtureDef = new FixtureDef {
 		density = 1f
 		friction = 1f
-		restitution = 1f
+		restitution = 0.5f
 		shape = new PolygonShape() {
 			setAsBox(1, 1)
 		}
@@ -28,10 +28,11 @@ object Wall {
 
 import net.cherryworm.electron.game.Wall._
 
-class Wall(world: World, x: Int, y: Int) extends Entity(world,
+class Wall(level: Level, x: Int, y: Int) extends Entity(
+	level,
 	wallBodyDef(x, y),
 	wallFixtureDef,
 	wallTextureRegion) {
 	
-	override def update(delta: Float): Unit = {}
+	override def update(delta: Float, stateOn: Boolean): Unit = {}
 }
