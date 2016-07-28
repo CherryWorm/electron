@@ -10,8 +10,9 @@ abstract class Entity(level: Level, bodyDef: BodyDef, fixtureDef: FixtureDef, pr
 	val body = level.world.createBody(bodyDef)
 	body.setUserData(this)
 	val fixture = body.createFixture(fixtureDef)
+	fixture.setUserData(this)
 	
-	def render(batch: SpriteBatch): Unit = {
+	def render(batch: SpriteBatch, stateOn: Boolean): Unit = {
 		val x = body.getPosition.x
 		val y = body.getPosition.y
 		
@@ -21,7 +22,7 @@ abstract class Entity(level: Level, bodyDef: BodyDef, fixtureDef: FixtureDef, pr
 			case _: CircleShape => {
 				val trans = new Vector2(1, 1) scl 0.5f
 				trans.rotateRad(body.getAngle)
-				batch.draw(textureRegion, x - 0.5f + trans.x, y - 0.5f + trans.y, 1f / 2, 1f / 2, 1, 1, 1, 1, body.getAngle * MathUtils.radiansToDegrees)
+				batch.draw(textureRegion, x - 0.5f + trans.x, y - 0.5f + trans.y, 0.5f, 0.5f, 1, 1, 1, 1, body.getAngle * MathUtils.radiansToDegrees)
 			}
 		}
 		for (light <- light) fixtureDef.shape match {

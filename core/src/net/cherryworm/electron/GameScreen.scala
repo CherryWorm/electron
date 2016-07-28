@@ -46,11 +46,13 @@ class GameScreen extends Screen {
 		if (level.debug) debugRenderer.render(level.world, camera.combined)
 	}
 	
-	override def show(): Unit = {}
-	override def hide(): Unit = {}
+	override def show() = Unit
 	
-	override def resume(): Unit = {}
-	override def pause(): Unit = {}
+	override def hide() = Unit
+	
+	override def resume() = Unit
+	
+	override def pause() = Unit
 	
 	override def resize(width: Int, height: Int): Unit = {
 		camera.viewportHeight = 10f

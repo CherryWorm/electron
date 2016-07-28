@@ -1,8 +1,8 @@
 package net.cherryworm.electron
 
-import com.badlogic.gdx.Game
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.Box2D
+import com.badlogic.gdx.{Game, Gdx}
 import com.github.czyzby.kiwi.log.LoggerService
 import com.github.czyzby.kiwi.util.gdx.GdxUtilities
 import com.kotcrab.vis.ui.VisUI
@@ -36,6 +36,7 @@ class Electron extends Game {
 	override def create() = {
 		Box2D.init()
 		VisUI.load()
+		TextureContainer.addTexturesRecursively(Gdx.files.internal("textures/"))
 		setScreen(GAME_SCREEN)
 	}
 	
@@ -47,6 +48,7 @@ class Electron extends Game {
 	override def dispose() = {
 		super.dispose()
 		batch.dispose()
+		TextureContainer.dispose()
 		VisUI.dispose()
 	}
 	

@@ -2,7 +2,7 @@ package net.cherryworm.electron.game
 
 import box2dLight.PointLight
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.g2d.{SpriteBatch, TextureRegion}
 import com.badlogic.gdx.graphics.{Color, Texture}
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
@@ -40,5 +40,21 @@ class Player(level: Level, x: Float, y: Float, val charge: Float) extends Entity
 		setXray(true)
 	})) {
 	
-	override def update(delta: Float, stateOn: Boolean): Unit = {}
+	var evacuated = false
+	
+	override def update(delta: Float, stateOn: Boolean) = Unit
+	
+	override def render(batch: SpriteBatch, stateOn: Boolean): Unit = {
+		if (!evacuated) super.render(batch, stateOn)
+	}
+	
+	def evacuate(): Unit = {
+		evacuated = true
+		body.setActive(false)
+		body.setAngularVelocity(0)
+		body.setLinearVelocity(0, 0)
+		if (level.players forall (_.evacuated)) {
+			
+		}
+	}
 }

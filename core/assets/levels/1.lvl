@@ -1,3 +1,21 @@
-10 5
-0.35 0.35 0.35 0.35
+1
 5 5 -1
+
+0.35 0.35 0.35 0.35
+
+4 3
+
+0 wall 0 1 0 0
+0 wall 0 1 0 0
+0 wall 0 0 0 0
+0 wall 0 0 0 0
+
+0 wall 0 1 0 0
+2 player
+1 player
+0 wall 0 1 0 0
+
+0 wall 0 1 0 0
+1 player
+1 player
+0 wall 0 0 0 0

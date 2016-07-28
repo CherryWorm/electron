@@ -9,34 +9,41 @@ import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.{Body, World}
+import com.badlogic.gdx.physics.box2d._
 import com.badlogic.gdx.utils.Disposable
 import net.cherryworm.electron.GameScreen
 import net.cherryworm.electron.GameScreen._
 
 
-class Level(gameScreen: GameScreen, fileHandle: FileHandle) extends Disposable {
-	
-	private val scanner = new Scanner(fileHandle.read())
-	scanner.useLocale(Locale.US)
-	
-	val width = scanner.nextInt()
-	val height = scanner.nextInt()
+class Level(gameScreen: GameScreen, fileHandle: FileHandle) extends Disposable with ContactListener {
 	
 	val world = new World(new Vector2(0, 0), true)
+	world.setContactListener(this)
 	val rayHandler = new RayHandler(world) {
-		setAmbientLight(scanner.nextFloat(), scanner.nextFloat(), scanner.nextFloat(), scanner.nextFloat())
 		setBlur(true)
 	}
+	var textureElements = List[TextureElement]()
 	
 	var debug = false
 	var powerOn = false
 	
-	val playerStartX = scanner.nextInt()
-	val playerStartY = scanner.nextInt()
 	
-	val player = new Player(this, playerStartX + 0.5f, playerStartY + 0.5f, scanner.nextFloat())
+	private val scanner = new Scanner(fileHandle.read())
+	scanner.useLocale(Locale.US)
 	
+	val players = new Array[Player](scanner.nextInt())
+	val playerStartPositions = new Array[Vector2](players.length)
+	
+	for (i <- players.indices) {
+		val playerStartPosition = new Vector2(scanner.nextInt(), scanner.nextInt())
+		playerStartPositions(i) = playerStartPosition
+		players(i) = new Player(this, playerStartPosition.x + 0.5f, playerStartPosition.y + 0.5f, scanner.nextFloat())
+	}
+	
+	rayHandler.setAmbientLight(scanner.nextFloat(), scanner.nextFloat(), scanner.nextFloat(), scanner.nextFloat())
+	
+	val width = scanner.nextInt()
+	val height = scanner.nextInt()
 	
 	def bodies = {
 		val bodies = new com.badlogic.gdx.utils.Array[Body](true, world.getBodyCount, classOf[Body])
@@ -48,24 +55,30 @@ class Level(gameScreen: GameScreen, fileHandle: FileHandle) extends Disposable {
 	
 	
 	def load(): Unit = {
-		for (i <- -10 to 20) {
-			new Wall(this, i + 0.5f, 0.5f)
+		for (y <- 0 until height; x <- 0 until width) {
+			scanner.nextInt() match {
+				case 0 => new Box(this, x, y, scanner);
+				case 1 => textureElements = TextureElement(x, y, scanner.next()) :: textureElements
+				case 2 => new Exit(this, x, y, scanner.next())
+			}
 		}
-		for (i <- -10 to 20) {
-			new Wall(this, i + 0.5f, 9.5f)
-		}
-		new Charge(this, -1, 2, 10.5f, 5.5f)
 	}
 	
 	def reset(): Unit = {
-		player.body.setTransform(playerStartX + 0.5f, playerStartY + 0.5f, 0)
-		player.body.setAngularVelocity(0)
-		player.body.setLinearVelocity(0, 0)
+		for (i <- players.indices) {
+			val player = players(i)
+			val playerStartPosition = playerStartPositions(i)
+			player.body.setTransform(playerStartPosition.x + 0.5f, playerStartPosition.y + 0.5f, 0)
+			player.body.setAngularVelocity(0)
+			player.body.setLinearVelocity(0, 0)
+			player.evacuated = false
+		}
 	}
 	
 	def render(batch: SpriteBatch, camera: OrthographicCamera): Unit = {
 		batch.begin()
-		entities foreach (_.render(batch))
+		entities foreach (_.render(batch, powerOn))
+		textureElements foreach (_.render(batch))
 		batch.end()
 		
 		rayHandler.setCombinedMatrix(camera)
@@ -95,7 +108,22 @@ class Level(gameScreen: GameScreen, fileHandle: FileHandle) extends Disposable {
 	override def dispose(): Unit = {
 		world.dispose()
 		rayHandler.dispose()
+		scanner.close()
 	}
 	
-	scanner.close()
+	override def postSolve(contact: Contact, impulse: ContactImpulse) = Unit
+	
+	override def endContact(contact: Contact) = Unit
+	
+	override def beginContact(contact: Contact) = {
+		(contact.getFixtureA.getUserData, contact.getFixtureB.getUserData) match {
+			case (_: Exit, player: Player) => player.evacuate()
+			case (player: Player, _: Exit) => player.evacuate()
+			case (_, _) =>
+		}
+	}
+	
+	override def preSolve(contact: Contact, oldManifold: Manifold) = Unit
+	
+	def finishGame() = reset()
 }
