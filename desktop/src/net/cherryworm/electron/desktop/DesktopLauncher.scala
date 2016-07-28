@@ -1,6 +1,7 @@
 package net.cherryworm.electron.desktop
 
 import com.badlogic.gdx.backends.lwjgl.{LwjglApplication, LwjglApplicationConfiguration}
+import com.github.czyzby.kiwi.util.gdx.GdxUtilities
 import net.cherryworm.electron.Electron
 
 object DesktopLauncher extends App {
@@ -10,7 +11,7 @@ object DesktopLauncher extends App {
 		resizable = true
 		width = 800
 		height = 450
-		useGL30 = true
+		useGL30 = System.getProperty("os.name").contains("Windows")
 	})
 	
 }
