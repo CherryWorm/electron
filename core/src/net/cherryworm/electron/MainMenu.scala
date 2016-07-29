@@ -1,6 +1,7 @@
 package net.cherryworm.electron
 
-import com.badlogic.gdx.scenes.scene2d.{Event, Stage}
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.{Event, InputEvent, Stage}
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.{Gdx, Screen}
 import com.kotcrab.vis.ui.building.CenteredTableBuilder
@@ -48,12 +49,12 @@ class MainMenu extends Screen {
 	private def initUI(): Unit = {
 		val tableBuilder = new CenteredTableBuilder
 		tableBuilder.append(new VisTextButton("Start") {
-			addListener((e: Event) => Electron.instance.setScreen(GAME_SCREEN))
-			setWidth(400)
-			setHeight(200)
+			addListener((e: InputEvent, x: Float, y: Float) => Electron.instance.setScreen(GAME_SCREEN))
 		})
 		
 		val root = tableBuilder.build()
+		
+		root.setFillParent(true)
 		
 		stage.addActor(root)
 	}

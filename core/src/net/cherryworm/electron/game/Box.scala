@@ -40,26 +40,23 @@ class Box(level: Level, x: Float, y: Float, textureId: String, chargeOff: Float,
 	},
 	TextureContainer(textureId),
 	Option(new PointLight(level.rayHandler, LIGHT_RAYS, Color.BLACK, 0f, 0f, 0f) {
-		setActive(false)
 		setXray(true)
 	})
 ) {
-	
-	def this(level: Level, x: Int, y: Int, scanner: Scanner) {
-		this(level, x + 0.5f, y + 0.5f, scanner.next(), scanner.nextFloat(), scanner.nextFloat(), scanner.nextFloat(), scanner.nextFloat())
-	}
-	
 	override def update(delta: Float, stateOn: Boolean): Unit = {
 		val charge = if (stateOn) chargeOn else chargeOff
 		
 		if (isCharged) for (light <- light) {
-			light.setColor(charge match {
-				case 0 => Color.BLACK
-				case i if i > 0 => new Color(0X00642BFF)
-				case i if i < 0 => new Color(0xBF3B00FF)
-			})
-			light.setActive(charge != 0)
-			light.setDistance(charge.abs * 2)
+			val appearance = charge match {
+				case 0 => level.neutralChargeAppearance
+				case i if i > 0 => level.positiveChargeAppearance
+				case i if i < 0 => level.negativeChargeAppearance
+			}
+			
+			println(appearance)
+			
+			light.setColor(appearance.lightColor)
+			light.setDistance(appearance.lightStrength * charge.abs)
 		}
 		
 		for (player <- level.players) {
@@ -79,12 +76,13 @@ class Box(level: Level, x: Float, y: Float, textureId: String, chargeOff: Float,
 		
 		if (isCharged) {
 			val charge = if (stateOn) chargeOn else chargeOff
+			val appearance = charge match {
+				case 0 => level.neutralChargeAppearance
+				case i if i > 0 => level.positiveChargeAppearance
+				case i if i < 0 => level.negativeChargeAppearance
+			}
 			
-			batch.draw(TextureContainer(charge match {
-				case 0 => "neutral_charge"
-				case i if i > 0 => "positive_charge"
-				case i if i < 0 => "negative_charge"
-			}), x - 0.25f, y - 0.25f, 0.5f, 0.25f, 0.25f, 0.5f, 1, 1, body.getAngle * MathUtils.radiansToDegrees)
+			batch.draw(TextureContainer(appearance.texture), x - 0.25f, y - 0.25f, 0.25f, 0.25f, 0.5f, 0.5f, 1, 1, body.getAngle * MathUtils.radiansToDegrees)
 		}
 	}
 	

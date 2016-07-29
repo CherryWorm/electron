@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.{Color, Texture}
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.physics.box2d.{BodyDef, CircleShape, FixtureDef}
+import net.cherryworm.electron.TextureContainer
 
 object Player {
 	
@@ -24,37 +25,50 @@ object Player {
 			setPosition(new Vector2(0.5f, 0.5f))
 		}
 	}
-	
-	lazy val playerTextureRegion = new TextureRegion(new Texture(Gdx.files.internal("textures/player.png")))
-	
 }
 
 import net.cherryworm.electron.GameScreen.LIGHT_RAYS
 import net.cherryworm.electron.game.Player._
 
-class Player(level: Level, x: Float, y: Float, val charge: Float) extends Entity(level,
+class Player(level: Level, x: Float, y: Float, val charge: Float, appearance: Appearance) extends Entity(
+	level,
 	playerBodyDef(x, y),
 	playerFixtureDef,
-	playerTextureRegion,
-	Option(new PointLight(level.rayHandler, LIGHT_RAYS, new Color(Color.WHITE.r, Color.WHITE.g, Color.WHITE.b, 0.7f), 3f, 0f, 0f) {
-		setXray(true)
-	})) {
+	TextureContainer(appearance.texture),
+	Option(new PointLight(level.rayHandler, LIGHT_RAYS, appearance.lightColor, appearance.lightStrength * charge.abs, 0f, 0f) {
+		setXray(false)
+	})
+) {
 	
 	var evacuated = false
+	var firstTimeEvacuated = true
 	
-	override def update(delta: Float, stateOn: Boolean) = Unit
+	override def update(delta: Float, stateOn: Boolean) = {
+		if(evacuated && firstTimeEvacuated) {
+			firstTimeEvacuated = false
+			body.setAngularVelocity(0)
+			body.setLinearVelocity(0, 0)
+			body.setActive(false)
+		}
+	}
 	
 	override def render(batch: SpriteBatch, stateOn: Boolean): Unit = {
 		if (!evacuated) super.render(batch, stateOn)
 	}
 	
-	def evacuate(): Unit = {
-		evacuated = true
-		body.setActive(false)
+	def reset(): Unit = {
 		body.setAngularVelocity(0)
 		body.setLinearVelocity(0, 0)
+		body.setActive(true)
+		evacuated = false
+		firstTimeEvacuated = true
+	}
+	
+	def evacuate(): Unit = {
+		evacuated = true
+		
 		if (level.players forall (_.evacuated)) {
-			
+			level.gameFinished = true
 		}
 	}
 }

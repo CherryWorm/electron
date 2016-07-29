@@ -25,7 +25,6 @@ class GameScreen extends Screen {
 	var accumulator = 0f
 	
 	val level = new Level(this, Gdx.files.internal("levels/1.lvl"))
-	level.load()
 	
 	override def dispose(): Unit = {
 		debugRenderer.dispose()
@@ -37,7 +36,6 @@ class GameScreen extends Screen {
 		level.updateWorld(delta)
 		
 		camera.update()
-		
 		
 		Electron.batch.setProjectionMatrix(camera.combined)
 		

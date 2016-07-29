@@ -11,7 +11,7 @@ object DesktopLauncher extends App {
 		resizable = true
 		width = 800
 		height = 450
-		useGL30 = System.getProperty("os.name").contains("Windows")
+		useGL30 = System.getProperty("os.name").toLowerCase contains "win"
 	})
 	
 }

@@ -37,7 +37,7 @@ class Electron extends Game {
 		Box2D.init()
 		VisUI.load()
 		TextureContainer.addTexturesRecursively(Gdx.files.internal("textures/"))
-		setScreen(GAME_SCREEN)
+		setScreen(MAIN_MENU)
 	}
 	
 	override def render() = {

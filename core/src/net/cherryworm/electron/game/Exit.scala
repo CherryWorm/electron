@@ -25,12 +25,14 @@ object Exit {
 import net.cherryworm.electron.GameScreen._
 import net.cherryworm.electron.game.Exit._
 
-class Exit(level: Level, x: Int, y: Int, textureId: String) extends Entity(
+class Exit(level: Level, x: Int, y: Int, appearance: Appearance) extends Entity(
 	level,
 	bodyDef(x + 0.5f, y + 0.5f),
 	fixtureDef,
-	TextureContainer(textureId),
-	Option(new PointLight(level.rayHandler, LIGHT_RAYS, new Color(0x006962FF), 15.0f, 0, 0))
+	TextureContainer(appearance.texture),
+	Option(new PointLight(level.rayHandler, LIGHT_RAYS, appearance.lightColor, appearance.lightStrength, 0, 0) {
+		setXray(true)
+	})
 ) {
 	override def update(delta: Float, stateOn: Boolean) = Unit
 	

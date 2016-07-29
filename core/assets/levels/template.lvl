@@ -1,10 +1,29 @@
+ambient_r ambient_g ambient_b ambient_a
+
+exit_light_r exit_light_g exit_light_b exit_light_a exit_light_strength
+exit_texture_id
+
+positive_charge_light_r positive_charge_light_g positive_charge_light_b positive_charge_light_a positive_charge_light_strength_per_charge
+positive_charge_texture
+neutral_charge_light_r neutral_charge_light_g neutral_charge_light_b neutral_charge_light_a neutral_charge_light_strength_per_charge
+neutral_charge_texture
+negative_charge_light_r negative_charge_light_g negative_charge_light_b negative_charge_light_a negative_charge_light_strength_per_charge
+negative_charge_texture
+
+positive_player_light_r positive_player_light_g positive_player_light_b positive_player_light_a positive_player_light_strength_per_charge
+positive_player_texture_id
+negative_player_light_r negative_player_light_g negative_player_light_b negative_player_light_a negative_player_light_strength_per_charge
+negative_player_texture_id
+
+
+
 n_players
 (n mal:)
 player_n_x player_n_y player_n_charge
 
-ambient_r ambient_g ambient_b ambient_a
+
 
 width height
 
 (width * height mal, reihenweiße:)
-type(0=box,1=texture,2=exit) textureId (wenn type==0:) chargeOff chargeOn friction restitution
+type(0=box,1=texture,2=exit) {(wenn type==0||type==1) texture_id} {(wenn type==0:) charge_off charge_on friction restitution}
