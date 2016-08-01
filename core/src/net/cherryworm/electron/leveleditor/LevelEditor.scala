@@ -3,12 +3,11 @@ package net.cherryworm.electron.leveleditor
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.{Vector2, Vector3}
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
-import com.badlogic.gdx.{Gdx, Input, InputProcessor, Screen}
-import net.cherryworm.electron.Electron
-import net.cherryworm.electron.game._
+import com.badlogic.gdx._
+import _root_.net.cherryworm.electron.Electron
+import _root_.net.cherryworm.electron.game._
 
 /*
 	TO-DOs
@@ -31,6 +30,8 @@ class LevelEditor extends Screen with InputProcessor {
 
 	var dragEntity: Option[DragEntityActor] = None
 	val sidebar = new Sidebar(camera)
+
+	Gdx.input.setInputProcessor(this)
 
 	def render_props(batch: SpriteBatch): Unit = {
 		Electron.batch.begin()
@@ -72,7 +73,9 @@ class LevelEditor extends Screen with InputProcessor {
 		if (level.debug) debugRenderer.render(level.world, camera.combined)
 	}
 
-	override def show() = Unit
+	override def show(): Unit = {
+		Gdx.input.setInputProcessor(this)
+	}
 
 	override def hide() = Unit
 
@@ -89,7 +92,9 @@ class LevelEditor extends Screen with InputProcessor {
 	override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
 		val pos3 = camera.unproject(new Vector3(screenX, screenY, 0))
 		val pos = new Vector2(pos3.x, pos3.y)
+		println("touchDown @", pos)
 		dragEntity = sidebar.entityAt(pos) map ((spec) => {
+			println("touchDown @", pos, spec)
 			new DragEntityActor(spec)
 		})
 		true
@@ -104,27 +109,10 @@ class LevelEditor extends Screen with InputProcessor {
 		true
 	}
 
-	override def touchUp (screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
-		true
-	}
-
-	override def mouseMoved(screenX: Int, screenY: Int): Boolean = {
-		true
-	}
-
-	override def keyTyped(character: Char): Boolean = {
-		true
-	}
-
-	override def keyDown(keycode: Int): Boolean = {
-		true
-	}
-
-	override def keyUp(keycode: Int): Boolean = {
-		true
-	}
-
-	override def scrolled(amount: Int): Boolean = {
-		true
-	}
+	override def touchUp (screenX: Int, screenY: Int, pointer: Int, button: Int) = true
+	override def mouseMoved(screenX: Int, screenY: Int) = true
+	override def keyTyped(character: Char) = true
+	override def keyDown(keyCode: Int) = true
+	override def keyUp(keyCode: Int) = true
+	override def scrolled(amount: Int) = true
 }
