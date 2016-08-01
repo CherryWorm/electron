@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.physics.box2d.{BodyDef, FixtureDef, PolygonShape}
 import net.cherryworm.electron.TextureContainer
+import net.cherryworm.electron.leveleditor.EntitySpec
 
 object Exit {
 	
@@ -20,6 +21,11 @@ object Exit {
 		position.set(x, y)
 	}
 	
+}
+
+object ExitSpec extends EntitySpec {
+	override val texture = "exit"
+	override def mkNew: Exit = ???
 }
 
 import net.cherryworm.electron.GameScreen._

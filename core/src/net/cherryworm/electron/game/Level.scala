@@ -14,9 +14,7 @@ import com.badlogic.gdx.utils.Disposable
 
 import net.cherryworm.electron.GameScreen._
 
-
-class Level(fileHandle: FileHandle) extends Disposable with ContactListener {
-	
+class Level() extends Disposable with ContactListener {
 	val world = new World(new Vector2(0, 0), true)
 	world.setContactListener(this)
 	val rayHandler = new RayHandler(world) {
@@ -28,59 +26,74 @@ class Level(fileHandle: FileHandle) extends Disposable with ContactListener {
 	var powerOn = false
 	
 	var gameFinished = false
-	
-	
-	private val scanner = new Scanner(fileHandle.read())
-	scanner.useLocale(Locale.US)
-	private def readColor() = new Color(scanner.nextFloat, scanner.nextFloat, scanner.nextFloat, scanner.nextFloat)
-	private def readLightStrength() = scanner.nextFloat
-	private def readTexture() = scanner.next
-	private def readAppearance() = Appearance(readColor(), readLightStrength(), readTexture())
-	private def readPosition() = new Vector2(scanner.nextInt, scanner.nextInt)
-	private def readCharge() = scanner.nextFloat
-	private def readFriction() = scanner.nextFloat
-	private def readRestitution() = scanner.nextFloat
-	
-	
-	//Laden der Lichter und Standarttexturen
-	val ambientLightColor = readColor()
-	rayHandler.setAmbientLight(ambientLightColor)
-	
-	val exitAppearance = readAppearance()
-	
-	val positiveChargeAppearance = readAppearance()
-	val neutralChargeAppearance = readAppearance()
-	val negativeChargeAppearance = readAppearance()
-	
-	val positivePlayerAppearance = readAppearance()
-	val negativePlayerAppearance = readAppearance()
-	
-	
-	
-	//Laden der Spieler
-	val players = new Array[Player](scanner.nextInt())
-	val playerStartPositions = new Array[Vector2](players.length)
-	
-	for (i <- players.indices) {
-		val playerStartPosition = readPosition()
-		playerStartPositions(i) = playerStartPosition
-		val charge = readCharge()
-		players(i) = new Player(this, playerStartPosition.x, playerStartPosition.y, charge, if(charge > 0) positivePlayerAppearance else negativePlayerAppearance)
-	}
-	
-	
-	//Laden des Feldes
-	val width = scanner.nextInt()
-	val height = scanner.nextInt()
-	
-	for (y <- 0 until height; x <- 0 until width) {
-		scanner.nextInt() match {
-			case 0 => new Box(this, x + 0.5f, y + 0.5f, readTexture(), readCharge(), readCharge(), readFriction(), readRestitution());
-			case 1 => textureElements = TextureElement(x, y, readTexture()) :: textureElements
-			case 2 => new Exit(this, x, y, exitAppearance)
+
+	// FIXME: weniger vars, mehr vals!
+	var players = new Array[Player](0)
+	var playerStartPositions = new Array[Vector2](players.length)
+
+	var positiveChargeAppearance = Appearance(Color.GREEN, 1f, "positive_charge")
+	var neutralChargeAppearance = Appearance(Color.WHITE, 1f, "neutral_charge")
+	var negativeChargeAppearance = Appearance(Color.RED, 1f, "negative_charge")
+
+	var positivePlayerAppearance = Appearance(Color.GREEN, 1f, "player")
+	var negativePlayerAppearance = Appearance(Color.RED, 1f, "player")
+
+	def this(fileHandle: FileHandle) {
+		this()
+
+		val scanner = new Scanner(fileHandle.read())
+		scanner.useLocale(Locale.US)
+		def readColor() = new Color(scanner.nextFloat, scanner.nextFloat, scanner.nextFloat, scanner.nextFloat)
+		def readLightStrength() = scanner.nextFloat
+		def readTexture() = scanner.next
+		def readAppearance() = Appearance(readColor(), readLightStrength(), readTexture())
+		def readPosition() = new Vector2(scanner.nextInt, scanner.nextInt)
+		def readCharge() = scanner.nextFloat
+		def readFriction() = scanner.nextFloat
+		def readRestitution() = scanner.nextFloat
+
+
+		//Laden der Lichter und Standarttexturen
+		val ambientLightColor = readColor()
+		rayHandler.setAmbientLight(ambientLightColor)
+
+		val exitAppearance = readAppearance()
+
+		positiveChargeAppearance = readAppearance()
+		neutralChargeAppearance = readAppearance()
+		negativeChargeAppearance = readAppearance()
+
+		positivePlayerAppearance = readAppearance()
+		negativePlayerAppearance = readAppearance()
+
+
+
+		//Laden der Spieler
+		players = new Array[Player](scanner.nextInt())
+		playerStartPositions = new Array[Vector2](players.length)
+
+		for (i <- players.indices) {
+			val playerStartPosition = readPosition()
+			playerStartPositions(i) = playerStartPosition
+			val charge = readCharge()
+			players(i) = new Player(this, playerStartPosition.x, playerStartPosition.y, charge, if(charge > 0) positivePlayerAppearance else negativePlayerAppearance)
 		}
+
+
+		//Laden des Feldes
+		val width = scanner.nextInt()
+		val height = scanner.nextInt()
+
+		for (y <- 0 until height; x <- 0 until width) {
+			scanner.nextInt() match {
+				case 0 => new Box(this, x + 0.5f, y + 0.5f, readTexture(), readCharge(), readCharge(), readFriction(), readRestitution());
+				case 1 => textureElements = TextureElement(x, y, readTexture()) :: textureElements
+				case 2 => new Exit(this, x, y, exitAppearance)
+			}
+		}
+
+		scanner.close()
 	}
-	
 	
 	
 	def bodies = {
@@ -130,7 +143,7 @@ class Level(fileHandle: FileHandle) extends Disposable with ContactListener {
 	}
 	
 	def processInputs(): Unit = {
-		powerOn = (0 to 153 map Gdx.input.isKeyPressed reduce (_ || _)) || (0 to 4 map Gdx.input.isButtonPressed reduce (_ || _)) || Gdx.input.isTouched
+		powerOn = (0 to 153 exists Gdx.input.isKeyPressed) || (0 to 4 exists Gdx.input.isButtonPressed) || Gdx.input.isTouched
 		if (Gdx.input.isKeyJustPressed(Keys.D)) debug = !debug
 		if (Gdx.input.isKeyJustPressed(Keys.R)) reset()
 	}
@@ -138,7 +151,6 @@ class Level(fileHandle: FileHandle) extends Disposable with ContactListener {
 	override def dispose(): Unit = {
 		world.dispose()
 		rayHandler.dispose()
-		scanner.close()
 	}
 	
 	override def postSolve(contact: Contact, impulse: ContactImpulse) = Unit
@@ -158,5 +170,10 @@ class Level(fileHandle: FileHandle) extends Disposable with ContactListener {
 	def finishGame() = {
 		reset()
 		gameFinished = false
+	}
+
+	def tiles(): IndexedSeq[Vector2] = {
+		// TODO: level width, height
+		for (x <- 0 until 30; y <- 0 until 20) yield new Vector2(x, y)
 	}
 }

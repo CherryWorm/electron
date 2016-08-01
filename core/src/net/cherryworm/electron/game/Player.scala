@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.physics.box2d.{BodyDef, CircleShape, FixtureDef}
 import net.cherryworm.electron.TextureContainer
+import net.cherryworm.electron.leveleditor.EntitySpec
 
 object Player {
 	
@@ -25,6 +26,12 @@ object Player {
 			setPosition(new Vector2(0.5f, 0.5f))
 		}
 	}
+}
+
+object PlayerSpec extends EntitySpec {
+	override val texture = ""
+
+	override def mkNew: Player = ???
 }
 
 import net.cherryworm.electron.GameScreen.LIGHT_RAYS

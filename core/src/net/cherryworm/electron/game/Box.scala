@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.physics.box2d.{BodyDef, FixtureDef, PolygonShape}
 import net.cherryworm.electron.TextureContainer
+import net.cherryworm.electron.leveleditor.EntitySpec
 
 object Box {
 	
@@ -24,6 +25,12 @@ object Box {
 		position.set(x, y)
 	}
 	
+}
+
+
+object BoxSpec extends EntitySpec {
+	override val texture = "wall"
+	override def mkNew: Exit = ???
 }
 
 import net.cherryworm.electron.GameScreen._
@@ -52,8 +59,6 @@ class Box(level: Level, x: Float, y: Float, textureId: String, chargeOff: Float,
 				case i if i > 0 => level.positiveChargeAppearance
 				case i if i < 0 => level.negativeChargeAppearance
 			}
-			
-			println(appearance)
 			
 			light.setColor(appearance.lightColor)
 			light.setDistance(appearance.lightStrength * charge.abs)
