@@ -29,7 +29,7 @@ object Box {
 
 
 object BoxSpec extends EntitySpec {
-	override val texture = "wall"
+	override val textureID = "wall"
 	override def mkNew: Exit = ???
 }
 

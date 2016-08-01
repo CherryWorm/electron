@@ -24,7 +24,7 @@ object Exit {
 }
 
 object ExitSpec extends EntitySpec {
-	override val texture = "exit"
+	override val textureID = "exit"
 	override def mkNew: Exit = ???
 }
 

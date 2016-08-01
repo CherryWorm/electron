@@ -29,8 +29,7 @@ object Player {
 }
 
 object PlayerSpec extends EntitySpec {
-	override val texture = ""
-
+	override val textureID = "player"
 	override def mkNew: Player = ???
 }
 

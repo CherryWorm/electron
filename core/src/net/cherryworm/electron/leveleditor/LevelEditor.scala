@@ -4,7 +4,7 @@ package net.cherryworm.electron.leveleditor
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.math.{Vector2, Vector3}
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.{Gdx, Input, InputProcessor, Screen}
 import net.cherryworm.electron.Electron
@@ -29,7 +29,7 @@ class LevelEditor extends Screen with InputProcessor {
 
 	val level = new Level(Gdx.files.internal("levels/1.lvl"))
 
-	val dragEntity: Option[DragEntityActor] = None
+	var dragEntity: Option[DragEntityActor] = None
 	val sidebar = new Sidebar(camera)
 
 	def render_props(batch: SpriteBatch): Unit = {
@@ -87,6 +87,11 @@ class LevelEditor extends Screen with InputProcessor {
 	}
 
 	override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
+		val pos3 = camera.unproject(new Vector3(screenX, screenY, 0))
+		val pos = new Vector2(pos3.x, pos3.y)
+		dragEntity = sidebar.entityAt(pos) map ((spec) => {
+			new DragEntityActor(spec)
+		})
 		true
 	}
 
