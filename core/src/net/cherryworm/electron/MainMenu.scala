@@ -51,6 +51,12 @@ class MainMenu extends Screen {
 		tableBuilder.append(new VisTextButton("Start") {
 			addListener((e: InputEvent, x: Float, y: Float) => Electron.instance.setScreen(GAME_SCREEN))
 		})
+
+    // FIXME: spacing
+
+		tableBuilder.append(new VisTextButton("LevelEditor") {
+			addListener((e: InputEvent, x: Float, y: Float) => Electron.instance.setScreen(LEVEL_EDITOR))
+		})
 		
 		val root = tableBuilder.build()
 		

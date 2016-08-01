@@ -11,11 +11,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d._
 import com.badlogic.gdx.utils.Disposable
-import net.cherryworm.electron.GameScreen
+
 import net.cherryworm.electron.GameScreen._
 
 
-class Level(gameScreen: GameScreen, fileHandle: FileHandle) extends Disposable with ContactListener {
+class Level(fileHandle: FileHandle) extends Disposable with ContactListener {
 	
 	val world = new World(new Vector2(0, 0), true)
 	world.setContactListener(this)

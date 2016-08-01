@@ -35,6 +35,8 @@ abstract class Entity(level: Level, bodyDef: BodyDef, fixtureDef: FixtureDef, pr
 			}
 		}
 	}
+
+	def renderProps(batch: SpriteBatch): Unit = {}
 	
 	def update(delta: Float, stateOn: Boolean): Unit
 	

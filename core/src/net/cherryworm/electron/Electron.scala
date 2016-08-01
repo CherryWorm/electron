@@ -21,6 +21,7 @@ object Electron {
 	
 	lazy val MAIN_MENU = new MainMenu
 	lazy val GAME_SCREEN = new GameScreen
+	lazy val LEVEL_EDITOR = new LevelEditor
 	
 	var instance: Electron = _
 	
