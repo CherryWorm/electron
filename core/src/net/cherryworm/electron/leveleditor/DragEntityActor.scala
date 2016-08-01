@@ -10,7 +10,7 @@ class DragEntityActor(spec: EntitySpec) {
 
 	def render(batch: SpriteBatch): Unit = {
 		batch.begin()
-		batch.draw(spec.region, x, y, 0.5f, 0.5f, 1, 1, 1, 1, 0f)
+		batch.draw(spec.region, x - 0.5f, y - 0.5f, 0.5f, 0.5f, 1, 1, 1, 1, 0f)
 		batch.end()
 	}
 }

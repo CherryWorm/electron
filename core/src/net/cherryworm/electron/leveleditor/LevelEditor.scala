@@ -63,7 +63,6 @@ class LevelEditor extends Screen with InputProcessor {
 		if (dragEntity.isDefined) {
 			Electron.shapeRenderer.begin()
 			level.tiles() foreach ((a) => {
-				println(a)
 				Electron.shapeRenderer.rect(a.x + 0.25f, a.y + 0.25f, 0.5f, 0.5f)
 			})
 			Electron.shapeRenderer.end()
@@ -92,24 +91,32 @@ class LevelEditor extends Screen with InputProcessor {
 	override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
 		val pos3 = camera.unproject(new Vector3(screenX, screenY, 0))
 		val pos = new Vector2(pos3.x, pos3.y)
-		println("touchDown @", pos)
 		dragEntity = sidebar.entityAt(pos) map ((spec) => {
-			println("touchDown @", pos, spec)
 			new DragEntityActor(spec)
 		})
 		true
 	}
 
 	override def touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = {
-		val pos = camera.unproject(new Vector3(screenX, screenY, 0))
-		dragEntity foreach ((e) => {
-			e.x = pos.x
-			e.y = pos.y
-		})
+		val pos3 = camera.unproject(new Vector3(screenX, screenY, 0))
+		val pos = new Vector2(pos3.x, pos3.y)
+		for (dragEntity <- dragEntity) {
+			val snapped = level.tiles() map ((tile) =>
+				new Vector2(0.5f, 0.5f).add(tile)
+			) find ((tile) => {
+				pos.dst(tile) < 0.3f
+			}) getOrElse pos
+			dragEntity.x = snapped.x
+			dragEntity.y = snapped.y
+		}
 		true
 	}
 
-	override def touchUp (screenX: Int, screenY: Int, pointer: Int, button: Int) = true
+	override def touchUp (screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
+		dragEntity = None
+		true
+	}
+
 	override def mouseMoved(screenX: Int, screenY: Int) = true
 	override def keyTyped(character: Char) = true
 	override def keyDown(keyCode: Int) = true
