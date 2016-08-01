@@ -5,7 +5,7 @@ import java.util.Scanner
 import box2dLight.PointLight
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.{MathUtils, Vector2}
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.physics.box2d.{BodyDef, FixtureDef, PolygonShape}
 import net.cherryworm.electron.TextureContainer
@@ -30,7 +30,7 @@ object Box {
 
 object BoxSpec extends EntitySpec {
 	override val textureID = "wall"
-	override def mkNew: Exit = ???
+	override def mkNew(pos: Vector2): Exit = ???
 }
 
 import net.cherryworm.electron.GameScreen._

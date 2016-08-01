@@ -9,7 +9,7 @@ import net.cherryworm.electron.game._
 
 trait EntitySpec {
 	val textureID: String
-	def mkNew: Entity
+	def mkNew(pos: Vector2): Entity
 	lazy val region = TextureContainer.getTexture(this.textureID)
 }
 

@@ -147,6 +147,8 @@ class Level() extends Disposable with ContactListener {
 		if (Gdx.input.isKeyJustPressed(Keys.D)) debug = !debug
 		if (Gdx.input.isKeyJustPressed(Keys.R)) reset()
 	}
+
+	def addEntity(entity: Entity): Unit = ???
 	
 	override def dispose(): Unit = {
 		world.dispose()

@@ -11,11 +11,13 @@ import _root_.net.cherryworm.electron.game._
 
 /*
 	TO-DOs
-	- [ ] render entity infos
-	- [ ] render sidebar
+	- [x] render sidebar
+	- [x] drag entities
+	- [x] snap to grid
 	- [ ] drag'n'drop entities
 	- [ ] delete entities by dragging on sidebar
 	- [ ] alt-drag to copy entities
+	- [ ] render entity data
  */
 
 class LevelEditor extends Screen with InputProcessor {
@@ -106,13 +108,16 @@ class LevelEditor extends Screen with InputProcessor {
 			) find ((tile) => {
 				pos.dst(tile) < 0.3f
 			}) getOrElse pos
-			dragEntity.x = snapped.x
-			dragEntity.y = snapped.y
+			dragEntity.pos = snapped
 		}
 		true
 	}
 
 	override def touchUp (screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
+		for (dragEntity <- dragEntity) {
+			val entity = dragEntity.spec.mkNew(dragEntity.pos)
+			level.addEntity(entity)
+		}
 		dragEntity = None
 		true
 	}
