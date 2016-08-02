@@ -31,12 +31,7 @@ class Level() extends Disposable with ContactListener {
 	var players = new Array[Player](0)
 	var playerStartPositions = new Array[Vector2](players.length)
 
-	var positiveChargeAppearance = Appearance(Color.GREEN, 1f, "positive_charge")
-	var neutralChargeAppearance = Appearance(Color.WHITE, 1f, "neutral_charge")
-	var negativeChargeAppearance = Appearance(Color.RED, 1f, "negative_charge")
-
-	var positivePlayerAppearance = Appearance(Color.GREEN, 1f, "player")
-	var negativePlayerAppearance = Appearance(Color.RED, 1f, "player")
+	var appearance = LevelAppearance.DEFAULT
 
 	def this(fileHandle: FileHandle) {
 		this()
@@ -59,14 +54,7 @@ class Level() extends Disposable with ContactListener {
 
 		val exitAppearance = readAppearance()
 
-		positiveChargeAppearance = readAppearance()
-		neutralChargeAppearance = readAppearance()
-		negativeChargeAppearance = readAppearance()
-
-		positivePlayerAppearance = readAppearance()
-		negativePlayerAppearance = readAppearance()
-
-
+		appearance = LevelAppearance.read(scanner)
 
 		//Laden der Spieler
 		players = new Array[Player](scanner.nextInt())
@@ -76,7 +64,7 @@ class Level() extends Disposable with ContactListener {
 			val playerStartPosition = readPosition()
 			playerStartPositions(i) = playerStartPosition
 			val charge = readCharge()
-			players(i) = new Player(this, playerStartPosition.x, playerStartPosition.y, charge, if(charge > 0) positivePlayerAppearance else negativePlayerAppearance)
+			players(i) = new Player(this, playerStartPosition.x, playerStartPosition.y, charge, if(charge > 0) appearance.positivePlayer else appearance.negativePlayer)
 		}
 
 

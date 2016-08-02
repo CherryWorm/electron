@@ -55,9 +55,9 @@ class Box(level: Level, x: Float, y: Float, textureId: String, chargeOff: Float,
 		
 		if (isCharged) for (light <- light) {
 			val appearance = charge match {
-				case 0 => level.neutralChargeAppearance
-				case i if i > 0 => level.positiveChargeAppearance
-				case i if i < 0 => level.negativeChargeAppearance
+				case 0 => level.appearance.neutralCharge
+				case i if i > 0 => level.appearance.positiveCharge
+				case i if i < 0 => level.appearance.negativeCharge
 			}
 			
 			light.setColor(appearance.lightColor)
@@ -82,9 +82,9 @@ class Box(level: Level, x: Float, y: Float, textureId: String, chargeOff: Float,
 		if (isCharged) {
 			val charge = if (stateOn) chargeOn else chargeOff
 			val appearance = charge match {
-				case 0 => level.neutralChargeAppearance
-				case i if i > 0 => level.positiveChargeAppearance
-				case i if i < 0 => level.negativeChargeAppearance
+				case 0 => level.appearance.neutralCharge
+				case i if i > 0 => level.appearance.positiveCharge
+				case i if i < 0 => level.appearance.negativeCharge
 			}
 			
 			batch.draw(TextureContainer(appearance.texture), x - 0.25f, y - 0.25f, 0.25f, 0.25f, 0.5f, 0.5f, 1, 1, body.getAngle * MathUtils.radiansToDegrees)
