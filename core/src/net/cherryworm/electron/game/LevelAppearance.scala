@@ -4,8 +4,6 @@ import java.util.Scanner
 
 import com.badlogic.gdx.graphics.Color
 
-case class DeineMudda(a: Int, b: Int)
-
 case class LevelAppearance (
 	positiveCharge: Appearance,
 	neutralCharge: Appearance,
