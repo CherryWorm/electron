@@ -48,13 +48,8 @@ class Level() extends Disposable with ContactListener {
 		def readRestitution() = scanner.nextFloat
 
 
-		//Laden der Lichter und Standarttexturen
-		val ambientLightColor = readColor()
-		rayHandler.setAmbientLight(ambientLightColor)
-
-		val exitAppearance = readAppearance()
-
 		appearance = LevelAppearance.read(scanner)
+		rayHandler.setAmbientLight(appearance.ambientLightColor)
 
 		//Laden der Spieler
 		players = new Array[Player](scanner.nextInt())
@@ -76,7 +71,7 @@ class Level() extends Disposable with ContactListener {
 			scanner.nextInt() match {
 				case 0 => new Box(this, x + 0.5f, y + 0.5f, readTexture(), readCharge(), readCharge(), readFriction(), readRestitution());
 				case 1 => textureElements = TextureElement(x, y, readTexture()) :: textureElements
-				case 2 => new Exit(this, x, y, exitAppearance)
+				case 2 => new Exit(this, x, y, appearance.exit)
 			}
 		}
 
@@ -136,8 +131,6 @@ class Level() extends Disposable with ContactListener {
 		if (Gdx.input.isKeyJustPressed(Keys.R)) reset()
 	}
 
-	def addEntity(entity: Entity): Unit = ???
-	
 	override def dispose(): Unit = {
 		world.dispose()
 		rayHandler.dispose()
@@ -160,10 +153,5 @@ class Level() extends Disposable with ContactListener {
 	def finishGame() = {
 		reset()
 		gameFinished = false
-	}
-
-	def tiles(): IndexedSeq[Vector2] = {
-		// TODO: level width, height
-		for (x <- 0 until 30; y <- 0 until 20) yield new Vector2(x, y)
 	}
 }

@@ -25,5 +25,5 @@ player_n_x player_n_y player_n_charge
 
 width height
 
-(width * height mal, reihenweiße:)
+(width * height mal, reihenweise:)
 type(0=box,1=texture,2=exit) {(wenn type==0||type==1) texture_id} {(wenn type==0:) charge_off charge_on friction restitution}

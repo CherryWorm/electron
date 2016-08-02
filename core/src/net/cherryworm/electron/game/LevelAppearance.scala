@@ -6,19 +6,23 @@ import com.badlogic.gdx.graphics.Color
 
 case class LevelAppearance (
 	positiveCharge: Appearance,
-	neutralCharge: Appearance,
+	neutralCharge:  Appearance,
 	negativeCharge: Appearance,
 	positivePlayer: Appearance,
-	negativePlayer: Appearance
+	negativePlayer: Appearance,
+	exit: Appearance,
+	ambientLightColor: Color
 )
 
 object LevelAppearance {
 	val DEFAULT = LevelAppearance(
 		positiveCharge = Appearance(Color.GREEN, 1f, "positive_charge"),
-		neutralCharge =  Appearance(Color.WHITE, 1f, "neutral_charge"),
+		neutralCharge  = Appearance(Color.WHITE, 1f, "neutral_charge"),
 		negativeCharge = Appearance(Color.RED, 1f, "negative_charge"),
 		positivePlayer = Appearance(Color.GREEN, 1f, "player"),
-		negativePlayer = Appearance(Color.RED, 1f, "player")
+		negativePlayer = Appearance(Color.RED, 1f, "player"),
+		exit           = Appearance(Color.WHITE, 1f, "exit"),
+		ambientLightColor = Color.WHITE
 	)
 
 	def read(scanner: Scanner): LevelAppearance = {
@@ -27,14 +31,14 @@ object LevelAppearance {
 		def readTexture() = scanner.next
 		def readAppearance() = Appearance(readColor(), readLightStrength(), readTexture())
 
-
 		LevelAppearance (
-			 positiveCharge = readAppearance(),
-			 neutralCharge  = readAppearance(),
-			 negativeCharge = readAppearance(),
-
-			 positivePlayer = readAppearance(),
-			 negativePlayer = readAppearance()
+			ambientLightColor = readColor(),
+			exit           = readAppearance(),
+			positiveCharge = readAppearance(),
+			neutralCharge  = readAppearance(),
+			negativeCharge = readAppearance(),
+			positivePlayer = readAppearance(),
+			negativePlayer = readAppearance()
 		)
 	}
 }

@@ -28,35 +28,24 @@ class LevelEditor extends Screen with InputProcessor {
 	camera.position.y = 5
 	camera.position.x = camera.viewportWidth / 2f
 
-	val level = new Level(Gdx.files.internal("levels/1.lvl"))
+	var level = LevelInfo.fromFileHandle(Gdx.files.internal("levels/1.lvl"))
 
 	var dragEntity: Option[DragEntityActor] = None
 	val sidebar = new Sidebar(camera)
 
 	Gdx.input.setInputProcessor(this)
 
-	def render_props(batch: SpriteBatch): Unit = {
-		Electron.batch.begin()
-		level.entities foreach (_.renderProps(Electron.batch))
-		Electron.batch.end()
-	}
-
 	override def dispose(): Unit = {
 		debugRenderer.dispose()
-		level.dispose()
 	}
 
 	override def render(delta: Float): Unit = {
-
-		level.updateWorld(delta)
 		camera.update()
 
 		Electron.batch.setProjectionMatrix(camera.combined)
 		Electron.shapeRenderer.setProjectionMatrix(camera.combined)
 
-		level.render(Electron.batch, camera)
-
-		render_props(Electron.batch)
+		level.render(Electron.batch)
 
 		sidebar.render(Electron.batch, Electron.shapeRenderer)
 
@@ -69,9 +58,6 @@ class LevelEditor extends Screen with InputProcessor {
 			})
 			Electron.shapeRenderer.end()
 		}
-
-
-		if (level.debug) debugRenderer.render(level.world, camera.combined)
 	}
 
 	override def show(): Unit = {
@@ -116,7 +102,7 @@ class LevelEditor extends Screen with InputProcessor {
 	override def touchUp (screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
 		for (dragEntity <- dragEntity) {
 			val entity = dragEntity.spec.mkNew(dragEntity.pos)
-			level.addEntity(entity)
+			level = level.addEntity(entity)
 		}
 		dragEntity = None
 		true
