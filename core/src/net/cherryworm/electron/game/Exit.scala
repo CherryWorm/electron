@@ -29,7 +29,7 @@ object ExitSpec extends EntitySpec {
 	override def mkNew(pos: Vector2): ExitInfo = ???
 }
 
-class ExitInfo(pos: Vector2) extends EntityInfo {
+case class ExitInfo(pos: Vector2) extends EntityInfo {
 	override val texture = TextureContainer.getTexture("exit")
 	override val position = pos
 }

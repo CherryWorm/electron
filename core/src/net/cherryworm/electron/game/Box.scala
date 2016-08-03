@@ -33,7 +33,7 @@ object BoxSpec extends EntitySpec {
 	override def mkNew(pos: Vector2): BoxInfo = ???
 }
 
-class BoxInfo(pos: Vector2, textureID: String, chargeOff: Float, chargeOn: Float, friction: Float, restitution: Float) extends EntityInfo {
+case class BoxInfo(pos: Vector2, textureID: String, chargeOff: Float, chargeOn: Float, friction: Float, restitution: Float) extends EntityInfo {
 	override val texture = TextureContainer.getTexture("wall")
 	override val position = pos
 }

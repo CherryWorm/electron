@@ -10,7 +10,7 @@ object TextureElementSpec extends EntitySpec {
 	override def mkNew(pos: Vector2): TextureElementInfo = ???
 }
 
-class TextureElementInfo(pos: Vector2, textureID: String) extends EntityInfo {
+case class TextureElementInfo(pos: Vector2, textureID: String) extends EntityInfo {
 	override val texture = TextureContainer.getTexture(textureID)
 	override val position = pos
 }

@@ -3,23 +3,28 @@ package net.cherryworm.electron.game
 import java.util.{Locale, Scanner}
 
 import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 
+import scala.reflect.ClassTag
 
-case class LevelInfo(entities: List[EntityInfo], appearance: LevelAppearance) {
+
+case class LevelInfo(entities: List[EntityInfo], appearance: LevelAppearance, width: Int, height: Int) {
 	def this() {
 		this(
 			entities = Nil,
-			appearance = LevelAppearance.DEFAULT
+			appearance = LevelAppearance.DEFAULT,
+			width = 30,
+			height = 20
 		)
 	}
 
-	def players(): List[PlayerInfo] = ???
+	def entitiesOf[T <: EntityInfo]()(implicit ev: ClassTag[T]): List[T] = {
+		entities collect { case e: T => e }
+	}
 
 	def addEntity(entity: EntityInfo): LevelInfo = {
-		new LevelInfo(entities ++ (entity :: Nil), appearance)
+		new LevelInfo(entities ++ (entity :: Nil), appearance, width, height)
 	}
 
 	def tiles(): IndexedSeq[Vector2] = {
@@ -47,38 +52,35 @@ object LevelInfo {
 
 		val appearance = LevelAppearance.read(scanner)
 
-		// Laden der Spieler
-		val players = new Array[EntityInfo](scanner.nextInt())
-		val playerStartPositions = new Array[Vector2](players.length)
+		val players = scanner.nextInt()
 
-		for (i <- players.indices) {
+		var entities: List[EntityInfo] = ((0 until players) map ((_: Int) => {
 			val playerStartPosition = readPosition()
-			playerStartPositions(i) = playerStartPosition
 			val charge = readCharge()
-			players(i) = new PlayerInfo(playerStartPosition, charge)
-		}
+			PlayerInfo(playerStartPosition, charge)
+		})).toList
 
 
 		// Laden des Feldes
 		val width = scanner.nextInt()
 		val height = scanner.nextInt()
 
-		var entities: List[EntityInfo] = Nil
-
 		for (y <- 0 until height; x <- 0 until width) {
 			val entityInfo = scanner.nextInt() match {
-				case 0 => new BoxInfo(new Vector2(x, y), readTexture(), readCharge(), readCharge(), readFriction(), readRestitution());
-				case 1 => new TextureElementInfo(new Vector2(x, y), readTexture())
-				case 2 => new ExitInfo(new Vector2(x, y))
+				case 0 => BoxInfo(new Vector2(x, y), readTexture(), readCharge(), readCharge(), readFriction(), readRestitution());
+				case 1 => TextureElementInfo(new Vector2(x, y), readTexture())
+				case 2 => ExitInfo(new Vector2(x, y))
 			}
-			entities = entities ++ (entityInfo :: Nil)
+			entities = entities :+ entityInfo
 		}
 
 		scanner.close()
 
 		new LevelInfo (
 			entities = entities,
-			appearance = appearance
+			appearance = appearance,
+			width = width,
+			height = height
 		)
 	}
 }

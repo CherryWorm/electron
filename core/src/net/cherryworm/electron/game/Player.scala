@@ -33,7 +33,7 @@ object PlayerSpec extends EntitySpec {
 	override def mkNew(pos: Vector2): PlayerInfo = ???
 }
 
-class PlayerInfo(pos: Vector2, charge: Float) extends EntityInfo {
+case class PlayerInfo(pos: Vector2, charge: Float) extends EntityInfo {
 	override val texture = TextureContainer.getTexture("player")
 	override val position = pos
 }

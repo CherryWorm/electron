@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Disposable
 
 import net.cherryworm.electron.GameScreen._
 
-class Level() extends Disposable with ContactListener {
+class Level(info: LevelInfo) extends Disposable with ContactListener {
 	val world = new World(new Vector2(0, 0), true)
 	world.setContactListener(this)
 	val rayHandler = new RayHandler(world) {
@@ -27,57 +27,38 @@ class Level() extends Disposable with ContactListener {
 	
 	var gameFinished = false
 
-	// FIXME: weniger vars, mehr vals!
-	var players = new Array[Player](0)
-	var playerStartPositions = new Array[Vector2](players.length)
+	val appearance = info.appearance
 
-	var appearance = LevelAppearance.DEFAULT
+	rayHandler.setAmbientLight(appearance.ambientLightColor)
 
-	def this(fileHandle: FileHandle) {
-		this()
+	val playerInfos: List[PlayerInfo] = info.entitiesOf[PlayerInfo]()
+	println(playerInfos(0))
 
-		val scanner = new Scanner(fileHandle.read())
-		scanner.useLocale(Locale.US)
-		def readColor() = new Color(scanner.nextFloat, scanner.nextFloat, scanner.nextFloat, scanner.nextFloat)
-		def readLightStrength() = scanner.nextFloat
-		def readTexture() = scanner.next
-		def readAppearance() = Appearance(readColor(), readLightStrength(), readTexture())
-		def readPosition() = new Vector2(scanner.nextInt, scanner.nextInt)
-		def readCharge() = scanner.nextFloat
-		def readFriction() = scanner.nextFloat
-		def readRestitution() = scanner.nextFloat
+	val players = new Array[Player](playerInfos.length)
+	val playerStartPositions = new Array[Vector2](players.length)
 
-
-		appearance = LevelAppearance.read(scanner)
-		rayHandler.setAmbientLight(appearance.ambientLightColor)
-
-		//Laden der Spieler
-		players = new Array[Player](scanner.nextInt())
-		playerStartPositions = new Array[Vector2](players.length)
-
-		for (i <- players.indices) {
-			val playerStartPosition = readPosition()
-			playerStartPositions(i) = playerStartPosition
-			val charge = readCharge()
-			players(i) = new Player(this, playerStartPosition.x, playerStartPosition.y, charge, if(charge > 0) appearance.positivePlayer else appearance.negativePlayer)
-		}
-
-
-		//Laden des Feldes
-		val width = scanner.nextInt()
-		val height = scanner.nextInt()
-
-		for (y <- 0 until height; x <- 0 until width) {
-			scanner.nextInt() match {
-				case 0 => new Box(this, x + 0.5f, y + 0.5f, readTexture(), readCharge(), readCharge(), readFriction(), readRestitution());
-				case 1 => textureElements = TextureElement(x, y, readTexture()) :: textureElements
-				case 2 => new Exit(this, x, y, appearance.exit)
-			}
-		}
-
-		scanner.close()
+	for (i <- players.indices) {
+		val pInfo = playerInfos(i)
+		playerStartPositions(i) = pInfo.position
+		players(i) = new Player(this, pInfo.pos.x, pInfo.pos.y, pInfo.charge, if(pInfo.charge > 0) appearance.positivePlayer else appearance.negativePlayer)
 	}
-	
+
+	val width = info.width
+	val height = info.height
+
+	info.entitiesOf[BoxInfo]() foreach ((b) => {
+		new Box(this, b.pos.x + 0.5f, b.pos.y + 0.5f, b.textureID, b.chargeOff, b.chargeOn, b.friction, b.restitution)
+	})
+
+	info.entitiesOf[TextureElementInfo]() foreach ((e) => {
+		textureElements = TextureElement(e.pos.x.asInstanceOf[Int], e.pos.y.asInstanceOf[Int], e.textureID) :: textureElements
+	})
+
+
+	info.entitiesOf[ExitInfo]() foreach ((e) => {
+		new Exit(this, e.pos.x.asInstanceOf[Int], e.pos.y.asInstanceOf[Int], appearance.exit)
+	})
+
 	
 	def bodies = {
 		val bodies = new com.badlogic.gdx.utils.Array[Body](true, world.getBodyCount, classOf[Body])
