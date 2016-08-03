@@ -28,14 +28,19 @@ object Box {
 }
 
 
-object BoxSpec extends EntitySpec {
+object WallSpec extends EntitySpec {
 	override val textureID = "wall"
-	override def mkNew(pos: Vector2): BoxInfo = ???
+	override def mkNew(pos: Vector2): BoxInfo = {
+		BoxInfo(pos, textureID, 0.0f, 1.0f, 0.0f, 0.0f) // TODO: adjust values
+	}
 }
 
 case class BoxInfo(pos: Vector2, textureID: String, chargeOff: Float, chargeOn: Float, friction: Float, restitution: Float) extends EntityInfo {
-	override val texture = TextureContainer.getTexture("wall")
+	override val texture = TextureContainer.getTexture(textureID)
 	override val position = pos
+	def at(pos: Vector2): BoxInfo = {
+		BoxInfo(pos, textureID, chargeOff, chargeOn, friction, restitution)
+	}
 }
 
 import net.cherryworm.electron.GameScreen._

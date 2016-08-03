@@ -5,14 +5,20 @@ import com.badlogic.gdx.math.Vector2
 import net.cherryworm.electron.TextureContainer
 import net.cherryworm.electron.leveleditor.EntitySpec
 
-object TextureElementSpec extends EntitySpec {
-	override val textureID = "_"
-	override def mkNew(pos: Vector2): TextureElementInfo = ???
+object BGSpec extends EntitySpec {
+	override val textureID = "cave"
+	override def mkNew(pos: Vector2): TextureElementInfo = {
+		TextureElementInfo(pos, textureID)
+	}
 }
 
 case class TextureElementInfo(pos: Vector2, textureID: String) extends EntityInfo {
 	override val texture = TextureContainer.getTexture(textureID)
 	override val position = pos
+
+	def at(pos: Vector2): TextureElementInfo = {
+		TextureElementInfo(pos, textureID)
+	}
 }
 
 case class TextureElement(x: Int, y: Int, textureId: String) {

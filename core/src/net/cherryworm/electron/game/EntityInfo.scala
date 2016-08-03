@@ -10,4 +10,6 @@ abstract class EntityInfo {
 	def render(batch: SpriteBatch): Unit = {
 		batch.draw(texture, position.x, position.y, 0.5f, 0.5f, 1, 1, 1, 1, 0f)
 	}
+
+	def at(pos: Vector2): EntityInfo
 }

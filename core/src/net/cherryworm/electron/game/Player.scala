@@ -30,12 +30,18 @@ object Player {
 
 object PlayerSpec extends EntitySpec {
 	override val textureID = "player"
-	override def mkNew(pos: Vector2): PlayerInfo = ???
+	override def mkNew(pos: Vector2): PlayerInfo = {
+		PlayerInfo(pos, 1.0f) // TODO: adjust values
+	}
 }
 
 case class PlayerInfo(pos: Vector2, charge: Float) extends EntityInfo {
 	override val texture = TextureContainer.getTexture("player")
 	override val position = pos
+
+	def at(pos: Vector2): PlayerInfo = {
+		PlayerInfo(pos, charge)
+	}
 }
 
 import net.cherryworm.electron.GameScreen.LIGHT_RAYS

@@ -24,12 +24,26 @@ case class LevelInfo(entities: List[EntityInfo], appearance: LevelAppearance, wi
 	}
 
 	def addEntity(entity: EntityInfo): LevelInfo = {
-		new LevelInfo(entities ++ (entity :: Nil), appearance, width, height)
+		val filtered = if (!entity.isInstanceOf[PlayerInfo]) {
+			entities filter (_.position.cpy().sub(entity.position).len() > 0.3)
+		} else {
+			entities
+		}
+		new LevelInfo(filtered ++ (entity :: Nil), appearance, width, height)
+	}
+
+	def grabEntity(pos: Vector2): Option[(EntityInfo, LevelInfo)] = {
+		for (e <- entities find (_.position.cpy().sub(pos).len() < 0.3)) {
+			val filtered = entities filter (_ != e)
+			val levelInfo = new LevelInfo(filtered, appearance, width, height)
+			return Some((e, levelInfo))
+		}
+
+		None
 	}
 
 	def tiles(): IndexedSeq[Vector2] = {
-		// TODO: level width, height
-		for (x <- 0 until 30; y <- 0 until 20) yield new Vector2(x, y)
+		for (x <- 0 until width; y <- 0 until height) yield new Vector2(x, y)
 	}
 
 	def render(batch: SpriteBatch): Unit = {

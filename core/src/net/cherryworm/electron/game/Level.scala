@@ -32,7 +32,6 @@ class Level(info: LevelInfo) extends Disposable with ContactListener {
 	rayHandler.setAmbientLight(appearance.ambientLightColor)
 
 	val playerInfos: List[PlayerInfo] = info.entitiesOf[PlayerInfo]()
-	println(playerInfos(0))
 
 	val players = new Array[Player](playerInfos.length)
 	val playerStartPositions = new Array[Vector2](players.length)

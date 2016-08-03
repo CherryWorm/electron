@@ -22,7 +22,7 @@ object LevelAppearance {
 		positivePlayer = Appearance(Color.GREEN, 1f, "player"),
 		negativePlayer = Appearance(Color.RED, 1f, "player"),
 		exit           = Appearance(Color.WHITE, 1f, "exit"),
-		ambientLightColor = Color.WHITE
+		ambientLightColor = new Color(0.35f, 0.35f, 0.35f, 0.35f)
 	)
 
 	def read(scanner: Scanner): LevelAppearance = {

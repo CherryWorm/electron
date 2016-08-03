@@ -14,7 +14,7 @@ trait EntitySpec {
 }
 
 class Sidebar(camera: Camera) {
-	val entities: List[EntitySpec] = PlayerSpec :: ExitSpec :: BoxSpec :: Nil
+	val entities: List[EntitySpec] = PlayerSpec :: ExitSpec :: WallSpec :: BGSpec :: Nil
 
 	// entity box size
 	val bSize = 0.9f

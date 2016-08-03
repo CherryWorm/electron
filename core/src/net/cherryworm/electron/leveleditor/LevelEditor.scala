@@ -2,7 +2,6 @@ package net.cherryworm.electron.leveleditor
 
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.{Vector2, Vector3}
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx._
@@ -14,8 +13,8 @@ import _root_.net.cherryworm.electron.game._
 	- [x] render sidebar
 	- [x] drag entities
 	- [x] snap to grid
-	- [ ] drag'n'drop entities
-	- [ ] delete entities by dragging on sidebar
+	- [x] drag'n'drop entities
+	- [x] delete entities by dragging on sidebar
 	- [ ] alt-drag to copy entities
 	- [ ] render entity data
  */
@@ -80,8 +79,16 @@ class LevelEditor extends Screen with InputProcessor {
 		val pos3 = camera.unproject(new Vector3(screenX, screenY, 0))
 		val pos = new Vector2(pos3.x, pos3.y)
 		dragEntity = sidebar.entityAt(pos) map ((spec) => {
-			new DragEntityActor(spec)
+			DragEntityActor(Left(spec))
 		})
+
+		if (dragEntity.isEmpty) {
+			for ((e, newLevel) <- level.grabEntity(pos.cpy().sub(0.5f, 0.5f))) {
+				level = newLevel
+				dragEntity = Some(DragEntityActor(Right(e)))
+			}
+		}
+
 		true
 	}
 
@@ -101,7 +108,15 @@ class LevelEditor extends Screen with InputProcessor {
 
 	override def touchUp (screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
 		for (dragEntity <- dragEntity) {
-			val entity = dragEntity.spec.mkNew(dragEntity.pos)
+			if (sidebar.inside(dragEntity.pos)) {
+				this.dragEntity = None
+				return true
+			}
+			val pos = dragEntity.pos.cpy().sub(0.5f, 0.5f)
+			val entity = dragEntity.info match {
+				case Left(spec) => spec.mkNew(pos)
+				case Right(e) => e.at(pos)
+			}
 			level = level.addEntity(entity)
 		}
 		dragEntity = None

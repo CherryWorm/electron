@@ -26,12 +26,18 @@ object Exit {
 
 object ExitSpec extends EntitySpec {
 	override val textureID = "exit"
-	override def mkNew(pos: Vector2): ExitInfo = ???
+	override def mkNew(pos: Vector2): ExitInfo = {
+		ExitInfo(pos)
+	}
 }
 
 case class ExitInfo(pos: Vector2) extends EntityInfo {
 	override val texture = TextureContainer.getTexture("exit")
 	override val position = pos
+
+	def at(pos: Vector2): ExitInfo = {
+		ExitInfo(pos)
+	}
 }
 
 import net.cherryworm.electron.GameScreen._
