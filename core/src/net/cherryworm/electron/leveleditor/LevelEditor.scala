@@ -15,7 +15,7 @@ import _root_.net.cherryworm.electron.game._
 	- [x] snap to grid
 	- [x] drag'n'drop entities
 	- [x] delete entities by dragging on sidebar
-	- [ ] alt-drag to copy entities
+	- [x] alt-drag to copy entities
 	- [ ] render entity data
  */
 
@@ -83,9 +83,16 @@ class LevelEditor extends Screen with InputProcessor {
 		})
 
 		if (dragEntity.isEmpty) {
-			for ((e, newLevel) <- level.grabEntity(pos.cpy().sub(0.5f, 0.5f))) {
-				level = newLevel
-				dragEntity = Some(DragEntityActor(Right(e)))
+			val p = pos.cpy().sub(0.5f, 0.5f)
+			if (Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT)) {
+				for (e <- level.entities find (_.position.cpy().sub(p).len() < 0.3)) {
+					dragEntity = Some(DragEntityActor(Right(e)))
+				}
+			} else {
+				for ((e, newLevel) <- level.grabEntity(p)) {
+					level = newLevel
+					dragEntity = Some(DragEntityActor(Right(e)))
+				}
 			}
 		}
 
